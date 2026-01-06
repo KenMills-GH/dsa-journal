@@ -1,14 +1,19 @@
-import fs from "fs";
-import path from "path";
-import { fileURLToPath } from "url";
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 // repo root is two levels up from dsa-journal/scripts
-const REPO_ROOT = path.resolve(__dirname, "..", "..");
+const REPO_ROOT = path.resolve(__dirname, '..', '..');
 
-const NOTES_DIR = path.join(REPO_ROOT, "notes");
-const OUT_FILE = path.join(REPO_ROOT, "NOTES_INDEX.md");
+// Prefer notes inside dsa-journal if present, otherwise fall back to repo-root notes
+const DJ_NOTES = path.join(path.resolve(__dirname, '..'), 'notes');
+const ROOT_NOTES = path.join(REPO_ROOT, 'notes');
+const NOTES_DIR = fs.existsSync(DJ_NOTES) ? DJ_NOTES : ROOT_NOTES;
+const OUT_FILE = fs.existsSync(DJ_NOTES)
+  ? path.join(path.resolve(__dirname, '..'), 'NOTES_INDEX.md')
+  : path.join(REPO_ROOT, 'NOTES_INDEX.md');
 
 function extractDayNumber(filename) {
   // matches day01.md, day1.md, day10.md, etc.
@@ -18,7 +23,7 @@ function extractDayNumber(filename) {
 
 function titleFromNote(filepath, fallback) {
   try {
-    const text = fs.readFileSync(filepath, "utf8");
+    const text = fs.readFileSync(filepath, 'utf8');
     // First markdown H1
     const m = text.match(/^#\s+(.*)\s*$/m);
     return m ? m[1].trim() : fallback;
@@ -29,7 +34,7 @@ function titleFromNote(filepath, fallback) {
 
 function main() {
   if (!fs.existsSync(NOTES_DIR)) {
-    console.log("No notes/ folder found. Nothing to index.");
+    console.log('No notes/ folder found. Nothing to index.');
     process.exit(0);
   }
 
@@ -37,16 +42,17 @@ function main() {
     .readdirSync(NOTES_DIR)
     .filter((f) => /^day\d+\.md$/i.test(f));
 
+  const outDir = path.dirname(OUT_FILE);
+
   const entries = files
     .map((f) => {
       const dayNum = extractDayNumber(f);
       const absolutePath = path.join(NOTES_DIR, f);
-      const relPath = path
-        .relative(REPO_ROOT, absolutePath)
-        .replace(/\\/g, "/");
+      // compute link relative to where the index file will live
+      const relPath = path.relative(outDir, absolutePath).replace(/\\/g, '/');
       const title = titleFromNote(
         absolutePath,
-        `Day ${String(dayNum).padStart(2, "0")}`
+        `Day ${String(dayNum).padStart(2, '0')}`
       );
       return { dayNum, file: f, relPath, title };
     })
@@ -54,25 +60,25 @@ function main() {
     .sort((a, b) => a.dayNum - b.dayNum);
 
   const lines = [];
-  lines.push("# Notes Index");
-  lines.push("");
-  lines.push("> This file is auto-generated. Run: `npm run index:notes`");
-  lines.push("");
-  lines.push("## Daily notes");
-  lines.push("");
+  lines.push('# Notes Index');
+  lines.push('');
+  lines.push('> This file is auto-generated. Run: `npm run index:notes`');
+  lines.push('');
+  lines.push('## Daily notes');
+  lines.push('');
 
   if (entries.length === 0) {
-    lines.push("- (No day notes found yet)");
+    lines.push('- (No day notes found yet)');
   } else {
     for (const e of entries) {
-      const dayLabel = String(e.dayNum).padStart(2, "0");
+      const dayLabel = String(e.dayNum).padStart(2, '0');
       lines.push(`- **Day ${dayLabel}** — [${e.title}](${e.relPath})`);
     }
   }
 
-  lines.push("");
-  fs.writeFileSync(OUT_FILE, lines.join("\n"), "utf8");
-  console.log("Updated:", OUT_FILE);
+  lines.push('');
+  fs.writeFileSync(OUT_FILE, lines.join('\n'), 'utf8');
+  console.log('Updated:', OUT_FILE);
 }
 
 main();
