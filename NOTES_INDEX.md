@@ -4,4 +4,4 @@
 
 ## Daily notes
 
-- **Day 06** — [Day ** — **](dsa-journal/notes/day06.md)
+- **Day 01** — [Day ** — **](notes/day01.md)
