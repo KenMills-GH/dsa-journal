@@ -1,0 +1,25 @@
+{
+  "name": "dsa-journal",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "dsa/_playground.js",
+  "scripts": {
+    "test": "node --test",
+    "new:day": "node scripts/new-day.mjs",
+    "index:notes": "node scripts/update-index.mjs",
+    "play": "node dsa/_playground.js",
+    "start": "node dsa/_playground.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KenMills-GH/dsa-journal.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/KenMills-GH/dsa-journal/issues"
+  },
+  "homepage": "https://github.com/KenMills-GH/dsa-journal#readme",
+  "description": ""
+}
