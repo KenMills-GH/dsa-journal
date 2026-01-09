@@ -12,6 +12,9 @@
 - [x] deleteMiddle - Delete middle node (second middle for even) and return new head
 - [x] partition - Reorder nodes so values < pivot come before values >= pivot
 - [x] reverseKGroup - Reverse nodes in groups of size k
+- [x] cycleLength - Return length of cycle in linked list (0 if no cycle)
+- [x] removeNthFromEnd - Remove nth node from end (1-based) or unchanged if out of range
+- [x] removeDuplicatesSorted - Remove duplicates from sorted linked list in-place
 
 ## Key pattern(s)
 
@@ -38,3 +41,9 @@
 - Fast/slow pointer mechanics and when to use each variation
 - Why cycle detection works (relative speed ensures they meet if cycle exists)
 - Time complexity of all solutions (all O(n) or better)
+
+## Recent Changes
+
+- Added three additional two-pointer problems: cycleLength, removeNthFromEnd, removeDuplicatesSorted
+- Updated helper functions in ll.js: refactored makeCycle, added makeIntersectingLists
+- All new functions tested and passing (commit: 49ab6eb)
