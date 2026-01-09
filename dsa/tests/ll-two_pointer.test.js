@@ -1,8 +1,15 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { connectTailTo, fromArray, getNodeAt, toArray } from "../helpers/ll.js";
 import {
+  connectTailTo,
+  fromArray,
+  makeCycle,
+  makeIntersectingLists,
+  toArray,
+} from "../helpers/ll.js";
+import {
+  cycleLength,
   cycleStartValue,
   deleteMiddle,
   hasCycle,
@@ -12,27 +19,10 @@ import {
   kthFromStartValue,
   middleValue,
   partition,
+  removeDuplicatesSorted,
+  removeNthFromEnd,
   reverseKGroup,
 } from "../practice/day02_two_pointer_practice.js";
-
-function makeCycle(values, startIndex) {
-  const head = fromArray(values);
-  if (!head) return null;
-
-  let tail = head;
-  let i = 0;
-  let startNode = null;
-
-  let cur = head;
-  while (cur) {
-    if (i === startIndex) startNode = cur;
-    tail = cur;
-    cur = cur.next;
-    i++;
-  }
-  tail.next = startNode; // create cycle
-  return head;
-}
 
 test("middleValue()", () => {
   assert.equal(middleValue(null), null);
@@ -74,32 +64,6 @@ test("isPalindrome()", () => {
   assert.equal(isPalindrome(fromArray([1, 2, 3, 2, 1])), true);
   assert.equal(isPalindrome(fromArray([1, 2, 3])), false);
 });
-
-function makeIntersectingLists(aVals, bVals, sharedVals, aJoinIdx, bJoinIdx) {
-  const shared = fromArray(sharedVals);
-  const a = fromArray(aVals);
-  const b = fromArray(bVals);
-
-  if (!shared) return { a, b, shared: null };
-
-  // attach shared to A at aJoinIdx
-  if (!a) {
-    // A becomes shared
-  } else {
-    const aJoin = getNodeAt(a, aJoinIdx);
-    aJoin.next = shared;
-  }
-
-  // attach shared to B at bJoinIdx
-  if (!b) {
-    // B becomes shared
-  } else {
-    const bJoin = getNodeAt(b, bJoinIdx);
-    bJoin.next = shared;
-  }
-
-  return { a: a || shared, b: b || shared, shared };
-}
 
 test("kthFromStartValue()", () => {
   assert.equal(kthFromStartValue(null, 0), null);
@@ -169,5 +133,86 @@ test("reverseKGroup()", () => {
   assert.deepEqual(
     toArray(reverseKGroup(fromArray([1, 2, 3, 4]), 0)),
     [1, 2, 3, 4]
+  );
+});
+
+test("cycleLength()", () => {
+  assert.equal(cycleLength(null), 0);
+  assert.equal(cycleLength(fromArray([1, 2, 3])), 0);
+
+  assert.equal(cycleLength(makeCycle([1], 0)), 1);
+  assert.equal(cycleLength(makeCycle([1, 2], 0)), 2);
+  assert.equal(cycleLength(makeCycle([1, 2, 3, 4], 1)), 3); // 2->3->4->2
+  assert.equal(cycleLength(makeCycle([5, 6, 7, 8, 9], 3)), 2); // 8->9->8
+});
+
+test("removeNthFromEnd()", () => {
+  // empty
+  assert.deepEqual(toArray(removeNthFromEnd(null, 1)), []);
+
+  // n out of range -> unchanged
+  assert.deepEqual(
+    toArray(removeNthFromEnd(fromArray([1, 2, 3]), 4)),
+    [1, 2, 3]
+  );
+  assert.deepEqual(
+    toArray(removeNthFromEnd(fromArray([1, 2, 3]), 0)),
+    [1, 2, 3]
+  );
+  assert.deepEqual(
+    toArray(removeNthFromEnd(fromArray([1, 2, 3]), -2)),
+    [1, 2, 3]
+  );
+
+  // remove last (n=1)
+  assert.deepEqual(
+    toArray(removeNthFromEnd(fromArray([1, 2, 3, 4, 5]), 1)),
+    [1, 2, 3, 4]
+  );
+
+  // remove 2nd from end
+  assert.deepEqual(
+    toArray(removeNthFromEnd(fromArray([1, 2, 3, 4, 5]), 2)),
+    [1, 2, 3, 5]
+  );
+
+  // remove head (n = length)
+  assert.deepEqual(
+    toArray(removeNthFromEnd(fromArray([1, 2, 3, 4, 5]), 5)),
+    [2, 3, 4, 5]
+  );
+
+  // single node
+  assert.deepEqual(toArray(removeNthFromEnd(fromArray([9]), 1)), []);
+  assert.deepEqual(toArray(removeNthFromEnd(fromArray([9]), 2)), [9]); // out of range unchanged
+});
+
+test("removeDuplicatesSorted()", () => {
+  assert.deepEqual(toArray(removeDuplicatesSorted(null)), []);
+
+  assert.deepEqual(toArray(removeDuplicatesSorted(fromArray([1]))), [1]);
+
+  assert.deepEqual(
+    toArray(removeDuplicatesSorted(fromArray([1, 1, 2]))),
+    [1, 2]
+  );
+
+  assert.deepEqual(
+    toArray(removeDuplicatesSorted(fromArray([1, 1, 2, 3, 3]))),
+    [1, 2, 3]
+  );
+
+  assert.deepEqual(
+    toArray(removeDuplicatesSorted(fromArray([1, 2, 3, 4]))),
+    [1, 2, 3, 4]
+  );
+
+  assert.deepEqual(toArray(removeDuplicatesSorted(fromArray([0, 0, 0, 0]))), [
+    0,
+  ]);
+
+  assert.deepEqual(
+    toArray(removeDuplicatesSorted(fromArray([-2, -2, -1, -1, -1, 0]))),
+    [-2, -1, 0]
   );
 });

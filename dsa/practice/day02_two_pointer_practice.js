@@ -269,6 +269,92 @@ export function reverseKGroup(head, k) {
     groupPrev = temp; // move groupPrev to the end of the reversed group
   }
 }
+/*
+you’re given the head of a linked list that may contain a cycle.
+Return the length of the cycle (number of unique nodes in the loop).
+If there’s no cycle, return 0.
+Must be O(n) time, O(1) space.
+*/
+
+export function cycleLength(head) {
+  let slow = head;
+  let fast = head;
+
+  while (fast && fast.next !== null) {
+    slow = slow.next;
+    fast = fast.next.next;
+
+    if (slow === fast) {
+      // slow is a node inside the cycle (meeting point)
+      let count = 1;
+      let cur = slow.next;
+
+      while (cur !== slow) {
+        count++;
+        cur = cur.next;
+      }
+      return count;
+    }
+  }
+
+  return 0; // no cycle
+}
+
+/*
+You’re given the head of a singly linked list and an integer n.
+Remove the nth node from the end of the list (1-based), and return the head of the modified list.
+
+n = 1 means remove the last node
+
+If n is out of range (bigger than the list length) return the list unchanged
+Aim for O(n) time and O(1) extra space.
+*/
+
+export function removeNthFromEnd(head, n) {
+  if (head === null) return null;
+  if (n <= 0) return head; // out of range -> unchanged
+
+  const dummy = { next: head };
+  let fast = dummy;
+  let slow = dummy;
+
+  // Move fast n+1 steps ahead (so slow ends up BEFORE the node to delete)
+  for (let i = 0; i < n + 1; i++) {
+    if (fast === null) return head; // n > length -> unchanged
+    fast = fast.next;
+  }
+
+  // Move both until fast falls off the end
+  while (fast !== null) {
+    fast = fast.next;
+    slow = slow.next;
+  }
+
+  // slow.next is the node to remove
+  slow.next = slow.next.next;
+
+  return dummy.next;
+}
+
+/*
+You’re given the head of a sorted singly linked list (non-decreasing order).
+Remove duplicates in-place so that each value appears only once.
+Return the head of the updated list.
+Do it in O(n) time and O(1) extra space.
+*/
+export function removeDuplicatesSorted(head) {
+  let cur = head;
+
+  while (cur && cur.next !== null) {
+    if (cur.value === cur.next.value) {
+      cur.next = cur.next.next; // delete duplicate
+    } else {
+      cur = cur.next;
+    }
+  }
+
+  return head;
+}
 
 function practice() {
   console.log("day02_two_pointer_practice.js ready");

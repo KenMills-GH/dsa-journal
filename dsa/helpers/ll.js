@@ -68,15 +68,22 @@ export function connectTailTo(head, node) {
   return head;
 }
 
-export function makeCycle(head, startIndex) {
-  // Utility for cycle tests/debugging:
-  // connects tail.next to node at startIndex.
-  // If invalid, returns head unchanged.
+export function makeCycle(values, startIndex) {
+  const head = fromArray(values);
   if (!head) return null;
-  const startNode = getNodeAt(head, startIndex);
-  if (!startNode) return head;
-  const tail = getTail(head);
-  tail.next = startNode;
+
+  let tail = head;
+  let i = 0;
+  let startNode = null;
+
+  let cur = head;
+  while (cur) {
+    if (i === startIndex) startNode = cur;
+    tail = cur;
+    cur = cur.next;
+    i++;
+  }
+  tail.next = startNode; // create cycle
   return head;
 }
 
@@ -91,4 +98,36 @@ export function listLength(head) {
     current = current.next;
   }
   return count;
+}
+
+export function makeIntersectingLists(
+  aVals,
+  bVals,
+  sharedVals,
+  aJoinIdx,
+  bJoinIdx
+) {
+  const shared = fromArray(sharedVals);
+  const a = fromArray(aVals);
+  const b = fromArray(bVals);
+
+  if (!shared) return { a, b, shared: null };
+
+  // attach shared to A at aJoinIdx
+  if (!a) {
+    // A becomes shared
+  } else {
+    const aJoin = getNodeAt(a, aJoinIdx);
+    aJoin.next = shared;
+  }
+
+  // attach shared to B at bJoinIdx
+  if (!b) {
+    // B becomes shared
+  } else {
+    const bJoin = getNodeAt(b, bJoinIdx);
+    bJoin.next = shared;
+  }
+
+  return { a: a || shared, b: b || shared, shared };
 }
