@@ -3,7 +3,7 @@
 // Created: 2026-01-11
 // Author: PC
 
-export { MinStack, Stack } from "../helpers/stack.js";
+import { Stack } from "../helpers/stack.js";
 
 /*
 Given a string containing only ()[]{}, determine if it’s valid.
@@ -16,7 +16,24 @@ open brackets are closed in the correct order
 every closing bracket has a matching opening
 */
 export function isValidParentheses(s) {
-  // TODO
+  const pairs = { "(": ")", "{": "}", "[": "]" };
+  const st = new Stack();
+
+  for (const ch of s) {
+    if (pairs[ch]) {
+      // opening bracket → push expected closer
+      st.push(pairs[ch]);
+    } else {
+      // closing bracket → must match stack top
+      if (st.isEmpty()) return false;
+
+      const expected = st.pop();
+      if (ch !== expected) return false;
+    }
+  }
+
+  // stack must be empty at the end
+  return st.isEmpty();
 }
 
 export function evalRPN(tokens) {
