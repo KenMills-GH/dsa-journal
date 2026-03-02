@@ -16,3 +16,4 @@
 - **Day 10** — [Day 10 — Binary Search](notes/day10.md)
 - **Day 11** — [Day ** — **](notes/day11.md)
 - **Day 12** — [Day ** — **](notes/day12.md)
+- **Day 13** — [Day ** — **](notes/day13.md)
