@@ -15,3 +15,4 @@
 - **Day 09** — [Day 09 — Sliding Window](notes/day09.md)
 - **Day 10** — [Day 10 — Binary Search](notes/day10.md)
 - **Day 11** — [Day ** — **](notes/day11.md)
+- **Day 12** — [Day ** — **](notes/day12.md)

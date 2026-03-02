@@ -36,12 +36,30 @@ export function isValidParentheses(s) {
   return st.isEmpty();
 }
 
-export function evalRPN(tokens) {
-  // TODO
-}
+/**
+ * Problem 2: Number of Recent Calls
+ * Pattern: Queue (FIFO)
+ */
+export class RecentCounter {
+  constructor() {
+    // Our queue to hold the timestamps of all recent pings
+    this.queue = [];
+  }
 
-export function nextGreaterRight(nums) {
-  // TODO
+  ping(t) {
+    // 1. Add the new ping's timestamp to the back of the line
+    this.queue.push(t);
+
+    // 2. Check the person at the front of the line (index 0).
+    // If their timestamp is older than the 3000ms window, kick them out.
+    // We keep doing this until the person at the front is within the window.
+    while (this.queue[0] < t - 3000) {
+      this.queue.shift();
+    }
+
+    // 3. The queue now only contains valid pings within the last 3000ms.
+    return this.queue.length;
+  }
 }
 
 // Start here
